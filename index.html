@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Thiên Thần Của Anh</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
+  <style>
+    body {
+      background: linear-gradient(to bottom, #fce2e6, #e0f7fa);
+      font-family: 'Poppins', sans-serif;
+      overflow-x: hidden;
+      position: relative;
+      min-height: 100vh;
+    }
+    .heart {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      background: #ff6b6b;
+      transform: rotate(-45deg);
+      animation: float 2s ease-in-out infinite;
+    }
+    .heart::before,
+    .heart::after {
+      content: '';
+      width: 20px;
+      height: 20px;
+      background: #ff6b6b;
+      border-radius: 50%;
+      position: absolute;
+    }
+    .heart::before {
+      top: -10px;
+      left: 0;
+    }
+    .heart::after {
+      left: 10px;
+      top: 0;
+    }
+    @keyframes float {
+      0% { transform: translateY(0) rotate(-45deg); opacity: 1; }
+      100% { transform: translateY(-100px) rotate(-45deg); opacity: 0; }
+    }
+    .sparkle {
+      position: absolute;
+      width: 5px;
+      height: 5px;
+      background: #fff;
+      border-radius: 50%;
+      box-shadow: 0 0 5px #fff, 0 0 10px #ffeb3b;
+      animation: sparkle 3s infinite;
+    }
+    @keyframes sparkle {
+      0% { transform: translateY(0); opacity: 1; }
+      100% { transform: translateY(-50vh); opacity: 0; }
+    }
+    .snowflake {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background: #fff;
+      border-radius: 50%;
+      box-shadow: 0 0 5px #fff;
+      animation: snowfall 5s linear infinite;
+    }
+    @keyframes snowfall {
+      0% { transform: translateY(-10vh); opacity: 1; }
+      100% { transform: translateY(100vh); opacity: 0; }
+    }
+    .typing {
+      display: inline-block;
+      white-space: nowrap;
+      overflow: hidden;
+      border-right: 2px solid #ff6b6b;
+      animation: typing 2s steps(30, end), blink 0.5s step-end infinite;
+    }
+    @keyframes typing {
+      from { width: 0; }
+      to { width: 100%; }
+    }
+    @keyframes blink {
+      50% { border-color: transparent; }
+    }
+    .flip-card {
+      perspective: 1000px;
+      width: 100%;
+      max-width: 300px;
+      height: 100px;
+      margin: 10px auto;
+    }
+    .flip-card-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transition: transform 0.6s;
+      transform-style: preserve-3d;
+    }
+    .flip-card:hover .flip-card-inner {
+      transform: rotateY(180deg);
+    }
+    .flip-card-front, .flip-card-back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 10px;
+    }
+    .flip-card-front {
+      background: #ffcccb;
+      color: #333;
+    }
+    .flip-card-back {
+      background: #ffb6c1;
+      color: #fff;
+      transform: rotateY(180deg);
+    }
+    .swiper-container {
+      width: 100%;
+      max-width: 300px;
+      margin: 0 auto;
+    }
+    .swiper-slide img {
+      width: 100%;
+      border-radius: 10px;
+    }
+    .puzzle-container {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      width: 100%;
+      max-width: 300px;
+      aspect-ratio: 1;
+      gap: 2px;
+      margin: 0 auto;
+      background: #fff;
+    }
+    @media (min-width: 768px) {
+      .puzzle-container {
+        max-width: 400px;
+      }
+    }
+    .puzzle-piece {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border: 1px solid #ccc;
+      cursor: move;
+    }
+    .puzzle-piece.dragging {
+      opacity: 0.5;
+    }
+    .drop-target {
+      background: rgba(255, 255, 255, 0.3);
+    }
+  </style>
+</head>
+<body class="flex flex-col items-center justify-center p-4">
+  <audio id="backgroundMusic" loop>
+    <source src="https://www.kozco.com/tech/piano2.mp3" type="audio/mpeg">
+  </audio>
+  <div class="text-center w-full max-w-lg">
+    <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold text-pink-600 mb-6 animate-bounce">
+      Thiên Thần Của Anh 💖
+    </h1>
+    <div class="flex flex-col sm:flex-row flex-wrap gap-4 mb-8 justify-center">
+      <button onclick="calculateDays()"
+        class="bg-pink-400 text-white px-4 py-2 sm:px-6 sm:py-3 rounded-full shadow-lg hover:bg-pink-500 transition duration-300 text-sm sm:text-base">
+        Số ngày thiên thần ra đời
+      </button>
+      <button onclick="showPhotos()"
+        class="bg-purple-400 text-white px-4 py-2 sm:px-6 sm:py-3 rounded-full shadow-lg hover:bg-purple-500 transition duration-300 text-sm sm:text-base">
+        Ảnh của thiên thần
+      </button>
+      <button onclick="showLoveMessage()"
+        class="bg-blue-400 text-white px-4 py-2 sm:px-6 sm:py-3 rounded-full shadow-lg hover:bg-blue-500 transition duration-300 text-sm sm:text-base">
+        Thông điệp yêu thương
+      </button>
+      <button onclick="showMilestones()"
+        class="bg-yellow-400 text-white px-4 py-2 sm:px-6 sm:py-3 rounded-full shadow-lg hover:bg-yellow-500 transition duration-300 text-sm sm:text-base">
+        Khoảnh khắc đặc biệt
+      </button>
+      <button onclick="startGame()"
+        class="bg-green-400 text-white px-4 py-2 sm:px-6 sm:py-3 rounded-full shadow-lg hover:bg-green-500 transition duration-300 text-sm sm:text-base">
+        Trò chơi xếp ảnh
+      </button>
+    </div>
+    <button onclick="toggleMusic()"
+      class="bg-green-400 text-white px-4 py-2 rounded-full shadow-lg hover:bg-green-500 transition duration-300 mb-4 text-sm sm:text-base">
+      Bật/Tắt nhạc
+    </button>
+    <div id="content" class="bg-white p-4 sm:p-6 rounded-lg shadow-lg w-full max-w-lg mx-auto hidden">
+      <div id="result" class="text-base sm:text-lg text-gray-700"></div>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+  <script>
+    const loveMessages = [
+      "Anh không hứa cho em cả thế giới, nhưng anh hứa cho em cả trái tim! 💖",
+      "Em là ánh sáng trong những ngày tăm tối của anh! ✨",
+      "Yêu em là điều tuyệt vời nhất anh từng làm! 😻",
+      "Em là giấc mơ mà anh không bao giờ muốn tỉnh! 🌙",
+      "Trái tim anh chỉ đập vì em thôi! 💓"
+    ];
+
+    const milestones = [
+      { date: "2023/01/01", title: "Ngày gặp nhau", desc: "Ngày anh gặp thiên thần của đời mình! 💫" },
+      { date: "2023/06/14", title: "Ngày tỏ tình", desc: "Ngày anh nói yêu em dưới ánh trăng! 🌙" },
+      { date: "2024/05/07", title: "Kỷ niệm 1 năm", desc: "Một năm bên nhau, mãi mãi không rời! 💕" }
+    ];
+
+    function calculateDays() {
+      const birthDate = new Date('2008/05/07'); // Thay bằng ngày sinh của "thiên thần"
+      const today = new Date();
+      const diffTime = Math.abs(today - birthDate);
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      document.getElementById('result').innerHTML = `Thiên thần đã tỏa sáng được <span class="text-pink-600 font-bold">${diffDays}</span> ngày! ✨`;
+      document.getElementById('content').classList.remove('hidden');
+      createHearts();
+    }
+
+    function showPhotos() {
+      document.getElementById('result').innerHTML = `
+        <div class="swiper-container">
+          <div class="swiper-wrapper">
+            <!-- Upload ảnh lên Imgur hoặc Google Drive, lấy link và thay vào đây -->
+            <div class="swiper-slide"><img src="/anh3.jpg" alt="Thiên thần"></div>
+            <div class="swiper-slide"><img src="/anh1.jpg" alt="Thiên thần"></div>
+            <div class="swiper-slide"><img src="/anh2.jpg" alt="Thiên thần"></div>
+            <div class="swiper-slide"><img src="/anh4.jpg" alt="Thiên thần"></div>
+          </div>
+          <div class="swiper-pagination"></div>
+        </div>
+        <p class="mt-4 text-pink-600">Thiên thần xinh đẹp nhất! 😻</p>
+      `;
+      document.getElementById('content').classList.remove('hidden');
+      new Swiper('.swiper-container', {
+        loop: true,
+        pagination: { el: '.swiper-pagination', clickable: true },
+        autoplay: { delay: 3000 }
+      });
+      createHearts();
+    }
+
+    function showLoveMessage() {
+      const randomMessage = loveMessages[Math.floor(Math.random() * loveMessages.length)];
+      document.getElementById('result').innerHTML = `<p class="typing">${randomMessage}</p>`;
+      document.getElementById('content').classList.remove('hidden');
+      createHearts();
+    }
+
+    function showMilestones() {
+      let html = '';
+      milestones.forEach(m => {
+        html += `
+          <div class="flip-card">
+            <div class="flip-card-inner">
+              <div class="flip-card-front">
+                <p>${m.title} (${m.date})</p>
+              </div>
+              <div class="flip-card-back">
+                <p>${m.desc}</p>
+              </div>
+            </div>
+          </div>
+        `;
+      });
+      document.getElementById('result').innerHTML = html;
+      document.getElementById('content').classList.remove('hidden');
+      createHearts();
+    }
+
+    function startGame() {
+      const imageUrl = '/anh4.jpg'; // Thay bằng URL ảnh bạn upload
+      const pieces = Array.from({ length: 9 }, (_, i) => ({
+        id: i,
+        correctPos: i,
+        currentPos: i
+      }));
+      // Xáo trộn vị trí
+      for (let i = pieces.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [pieces[i].currentPos, pieces[j].currentPos] = [pieces[j].currentPos, pieces[i].currentPos];
+      }
+      let html = `
+        <p class="text-pink-600 mb-4">Kéo và thả các ô để xếp thành ảnh hoàn chỉnh! 💖</p>
+        <div class="puzzle-container" id="puzzle">
+      `;
+      pieces.forEach(piece => {
+        const x = Math.floor(piece.id % 3) * (100 / 3);
+        const y = Math.floor(piece.id / 3) * (100 / 3);
+        html += `
+          <img
+            class="puzzle-piece"
+            draggable="true"
+            data-id="${piece.id}"
+            data-current="${piece.currentPos}"
+            src="${imageUrl}"
+            style="object-position: ${-x}% ${-y}%;"
+          >
+        `;
+      });
+      html += '</div>';
+      document.getElementById('result').innerHTML = html;
+      document.getElementById('content').classList.remove('hidden');
+      initPuzzle();
+      createHearts();
+    }
+
+    function initPuzzle() {
+      const pieces = document.querySelectorAll('.puzzle-piece');
+      pieces.forEach(piece => {
+        piece.addEventListener('dragstart', e => {
+          piece.classList.add('dragging');
+          e.dataTransfer.setData('text/plain', piece.dataset.id);
+        });
+        piece.addEventListener('dragend', () => {
+          piece.classList.remove('dragging');
+        });
+        piece.addEventListener('dragover', e => e.preventDefault());
+        piece.addEventListener('dragenter', () => piece.classList.add('drop-target'));
+        piece.addEventListener('dragleave', () => piece.classList.remove('drop-target'));
+        piece.addEventListener('drop', e => {
+          e.preventDefault();
+          const draggedId = e.dataTransfer.getData('text/plain');
+          const draggedPiece = document.querySelector(`.puzzle-piece[data-id="${draggedId}"]`);
+          const targetPiece = e.target;
+          if (draggedPiece !== targetPiece) {
+            const tempCurrent = draggedPiece.dataset.current;
+            draggedPiece.dataset.current = targetPiece.dataset.current;
+            targetPiece.dataset.current = tempCurrent;
+            const puzzle = document.getElementById('puzzle');
+            const sortedPieces = Array.from(puzzle.children).sort((a, b) => a.dataset.current - b.dataset.current);
+            puzzle.innerHTML = '';
+            sortedPieces.forEach(p => puzzle.appendChild(p));
+            checkPuzzleComplete();
+          }
+          targetPiece.classList.remove('drop-target');
+        });
+      });
+    }
+
+    function checkPuzzleComplete() {
+      const pieces = document.querySelectorAll('.puzzle-piece');
+      let isComplete = true;
+      pieces.forEach(piece => {
+        if (piece.dataset.id !== piece.dataset.current) {
+          isComplete = false;
+        }
+      });
+      if (isComplete) {
+        document.getElementById('result').innerHTML += `
+          <p class="text-pink-600 mt-4 animate-bounce">Chúc mừng! Bạn đã xếp hoàn chỉnh ảnh thiên thần! 🎉</p>
+        `;
+        createHearts();
+      }
+    }
+
+    function createHearts() {
+      for (let i = 0; i < 5; i++) {
+        const heart = document.createElement('div');
+        heart.className = 'heart';
+        heart.style.left = `${Math.random() * 100}vw`;
+        heart.style.animationDelay = `${Math.random() * 2}s`;
+        document.body.appendChild(heart);
+        setTimeout(() => heart.remove(), 2000);
+      }
+    }
+
+    function createSparkles() {
+      setInterval(() => {
+        const sparkle = document.createElement('div');
+        sparkle.className = 'sparkle';
+        sparkle.style.left = `${Math.random() * 100}vw`;
+        sparkle.style.top = `${Math.random() * 100}vh`;
+        document.body.appendChild(sparkle);
+        setTimeout(() => sparkle.remove(), 3000);
+      }, 500);
+    }
+
+    function createSnowflakes() {
+      setInterval(() => {
+        const snowflake = document.createElement('div');
+        snowflake.className = 'snowflake';
+        snowflake.style.left = `${Math.random() * 100}vw`;
+        document.body.appendChild(snowflake);
+        setTimeout(() => snowflake.remove(), 5000);
+      }, 300);
+    }
+
+    function toggleMusic() {
+      const music = document.getElementById('backgroundMusic');
+      if (music.paused) {
+        music.play();
+        this.textContent = 'Tắt nhạc';
+      } else {
+        music.pause();
+        this.textContent = 'Bật nhạc';
+      }
+    }
+
+    // Khởi tạo hiệu ứng
+    createSparkles();
+    createSnowflakes();
+  </script>
+</body>
+</html>
